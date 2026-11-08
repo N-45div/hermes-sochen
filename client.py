@@ -19,10 +19,10 @@ import urllib.parse
 import urllib.request
 from typing import Any, Optional
 
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 CLIENT = f"hermes-sochen/{VERSION}"
 DEFAULT_BASE_URL = "https://sochen.dev"
-SETUP_URL = "https://sochen.dev/hermes?utm_source=hermes&utm_medium=plugin"
+SETUP_URL = "https://sochen.dev/agents?utm_source=hermes&utm_medium=plugin"
 
 # A job request waits at most this long for a quick answer before coming back "working".
 MAX_WAIT_SECONDS = 120

@@ -85,7 +85,7 @@ class WithoutAKey(unittest.TestCase):
                 reply = call(ctx, name, args)
                 self.assertFalse(reply["ok"])
                 self.assertTrue(reply["needs_setup"])
-                self.assertIn("sochen.dev/hermes", reply["message"])
+                self.assertIn("sochen.dev/agents", reply["message"])
             self.assertEqual(server.requests, [])
             self.assertIsNone(instance.before_tool(tool_name="sochen_handoff", args={"task": "x"}))
             self.assertIsNone(instance.before_turn())

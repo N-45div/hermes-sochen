@@ -55,7 +55,7 @@ The plugin also adds:
 
 The free tools need nothing. For everything else:
 
-1. Make a key at **[sochen.dev/hermes](https://sochen.dev/hermes)**. Every account gets **100 free API credits**,
+1. Make a key at **[sochen.dev/agents](https://sochen.dev/agents)**. Every account gets **100 free API credits**,
    spread over as many jobs as you like.
 2. Give the key to Hermes:
 

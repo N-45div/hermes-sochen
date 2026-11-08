@@ -1,5 +1,5 @@
 name: sochen
-version: 0.2.1
+version: 0.2.2
 description: >-
   Hand Sochen (sochen.dev) the jobs Hermes can't do on its own: phone a US business and bring back
   the answer, research that keeps running in the cloud, and email and calendar jobs that wait for
@@ -7,7 +7,7 @@ description: >-
   in Hermes Desktop.
 author: Sochen
 license: MIT
-homepage: https://sochen.dev/hermes
+homepage: https://sochen.dev/agents
 manifest_version: 2
 api_version: 1
 requires_hermes: ">=0.22.5"
@@ -30,7 +30,7 @@ config_schema:
     env: SOCHEN_API_KEY
     label: Sochen API key
     description: >-
-      Make one at sochen.dev/hermes (every account gets 100 free API credits). Invoices, rent receipts and
+      Make one at sochen.dev/agents (every account gets 100 free API credits). Invoices, rent receipts and
       bill splits work without it.
     required: false
   ask_before_handoff:

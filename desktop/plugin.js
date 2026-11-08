@@ -20,7 +20,7 @@ import {
 import { jsx, jsxs } from 'react/jsx-runtime'
 
 const PATH = '/sochen'
-const SETUP_URL = 'https://sochen.dev/hermes?utm_source=hermes&utm_medium=desktop'
+const SETUP_URL = 'https://sochen.dev/agents?utm_source=hermes&utm_medium=desktop'
 const HOME_URL = 'https://sochen.dev/new'
 const POLL_MS = 30_000
 
@@ -148,7 +148,7 @@ function DeskPage({ store, refresh, open }) {
   } else if (view.state === 'setup') {
     body = jsx(Notice, {
       title: 'Connect Sochen',
-      body: 'Make a key at sochen.dev/hermes (every account gets 100 free API credits), then add it in Settings → Plugins → Sochen → API key, or run: hermes config set SOCHEN_API_KEY <your key>. Invoices, rent receipts and bill splits work without it.',
+      body: 'Make a key at sochen.dev/agents (every account gets 100 free API credits), then add it in Settings → Plugins → Sochen → API key, or run: hermes config set SOCHEN_API_KEY <your key>. Invoices, rent receipts and bill splits work without it.',
       actions: [
         jsx(Button, { key: 'k', size: 'sm', onClick: () => open(view.setup_url || SETUP_URL), children: 'Get a key' }),
         jsx(Button, { key: 'r', size: 'sm', variant: 'outline', onClick: () => void refresh(), children: 'I’ve added it' })

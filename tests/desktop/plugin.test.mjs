@@ -116,7 +116,7 @@ describe('the Sochen page in Hermes Desktop', () => {
   })
 
   it('shows how to connect when there is no key, and errors without losing the last desk', async () => {
-    const ctx = fakeCtx([{ state: 'setup', setup_url: 'https://sochen.dev/hermes' }])
+    const ctx = fakeCtx([{ state: 'setup', setup_url: 'https://sochen.dev/agents' }])
     plugin.register(ctx)
     await settle()
     assert.match(text(page(ctx).render()), /Connect Sochen/)
