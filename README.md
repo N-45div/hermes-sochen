@@ -72,8 +72,10 @@ The free tools need nothing. For everything else:
 
    Or type `/sochen` to see your desk.
 
-Phone calls go to US businesses, and they need paid API credits (a pack or a monthly plan), not the
-free ones. Sochen says on each call that it's an AI calling for you.
+Phone calls go to US businesses, with nothing to set up: no number to add or verify. They need paid
+API credits (a pack or a monthly plan), not the free ones. Sochen says on each call that it's an AI
+calling for you. Asking for a business in another country (India included) puts you on that
+country's waitlist, and you're emailed when calls there open.
 
 ## Credits
 

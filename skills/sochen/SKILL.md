@@ -21,8 +21,10 @@ user's OK in the Sochen app, with the details shown first.
 
 Use `sochen_handoff` when the job needs one of those things:
 
-- **A phone call**: opening hours, a price, whether something is in stock, a free table, a repair's
-  status. Sochen says it's an AI calling for the user, and brings back the answer and a transcript.
+- **A phone call to a US business**: opening hours, a price, whether something is in stock, a free
+  table, a repair's status; or two or three businesses at once to compare quotes. Sochen says it's an
+  AI calling for the user, and brings back the answer and a transcript. Nothing to set up. For a
+  business outside the US, Sochen puts the user on that country's waitlist: pass that on.
 - **A long job**: research, comparisons or browsing that takes many minutes, or should keep going
   after the user closes the laptop.
 - **The user's Sochen apps**: reading or drafting email, finding a calendar slot. Sending waits for
