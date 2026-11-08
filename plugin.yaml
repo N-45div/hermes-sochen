@@ -1,0 +1,50 @@
+name: sochen
+version: 0.1.0
+description: >-
+  Hand Sochen (sochen.dev) the jobs Hermes can't do on its own: phone a US business and bring back
+  the answer, research that keeps running in the cloud, and email and calendar jobs that wait for
+  your OK. Free GST invoices, rent receipts and UPI bill splits with no account, and your Sochen desk
+  in Hermes Desktop.
+author: Sochen
+license: MIT
+homepage: https://sochen.dev/hermes
+manifest_version: 2
+api_version: 1
+requires_hermes: ">=0.22.5"
+tags: [tools, phone-calls, india, invoices, agents]
+
+provides_tools:
+  - sochen_handoff
+  - sochen_job
+  - sochen_desk
+  - sochen_gst_invoice
+  - sochen_rent_receipts
+  - sochen_upi_split
+provides_hooks:
+  - pre_tool_call
+  - pre_llm_call
+
+config_schema:
+  api_key:
+    type: secret
+    env: SOCHEN_API_KEY
+    label: Sochen API key
+    description: >-
+      Make one at sochen.dev/hermes (a new account's first job is free). Invoices, rent receipts and
+      bill splits work without it.
+    required: false
+  ask_before_handoff:
+    type: bool
+    default: true
+    label: Ask before handing Sochen a job
+    description: Hermes asks you first, since a job uses your Sochen credits.
+  report_finished_jobs:
+    type: bool
+    default: true
+    label: Tell me when Sochen finishes a job
+    description: On your next message, Hermes hears which jobs finished or need your OK.
+  base_url:
+    type: str
+    default: https://sochen.dev
+    label: Sochen address
+    description: Leave as it is unless you run Sochen yourself.

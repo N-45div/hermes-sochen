@@ -1,0 +1,321 @@
+{
+  "_note": "Generated from Sochen's MCP server (POST https://sochen.dev/api/mcp, tools/list). Each tool here calls the server tool named in server_tool.",
+  "tools": [
+    {
+      "name": "sochen_gst_invoice",
+      "server_tool": "make_gst_invoice",
+      "title": "Make a GST invoice",
+      "description": "Free, with no Sochen account. Makes an Indian GST tax invoice as a PDF from details the user gives: seller and buyer names, addresses, states and GSTINs, and line items with quantity, price before GST, GST rate and HSN/SAC code. Within one state it charges CGST + SGST (half the rate each); to another state, IGST; a seller without a GSTIN gets a plain invoice with no GST. Lines are rounded to paise and the total to the nearest rupee with a round-off line, and the total is written in words. Returns the tax breakdown and a link to the PDF that works for 24 hours. Nothing is saved to an account or sent to anyone.\nUse this when the user wants a GST invoice or bill for a sale of goods or services in India.\nDo not use for quotations or estimates, e-invoices that need an IRN from the GST portal, e-way bills, GST return filing, or invoices in currencies other than rupees.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "seller": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "address": {
+                "type": "string",
+                "maxLength": 400
+              },
+              "state": {
+                "description": "Indian state or union territory, e.g. Karnataka.",
+                "type": "string",
+                "maxLength": 60
+              },
+              "gstin": {
+                "description": "15-character GSTIN, if registered.",
+                "type": "string",
+                "maxLength": 20
+              },
+              "phone": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "email": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "upi_id": {
+                "description": "The seller's UPI ID (name@bank), to print a pay-by-UPI QR for the total.",
+                "type": "string",
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "description": "The business issuing the invoice. With a GSTIN, it is a tax invoice; without one, a plain invoice with no GST."
+          },
+          "buyer": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "address": {
+                "type": "string",
+                "maxLength": 400
+              },
+              "state": {
+                "description": "Indian state or union territory, e.g. Karnataka.",
+                "type": "string",
+                "maxLength": 60
+              },
+              "gstin": {
+                "description": "15-character GSTIN, if registered.",
+                "type": "string",
+                "maxLength": 20
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "description": "Who the invoice is to."
+          },
+          "items": {
+            "minItems": 1,
+            "maxItems": 40,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "hsn_sac": {
+                  "type": "string",
+                  "pattern": "^\\d{4,8}$"
+                },
+                "quantity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1000000
+                },
+                "unit": {
+                  "description": "e.g. pcs, kg, hrs.",
+                  "type": "string",
+                  "maxLength": 12
+                },
+                "rate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100000000,
+                  "description": "Price per unit before GST, in rupees."
+                },
+                "gst_rate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 40,
+                  "description": "GST rate in percent, e.g. 0, 5, 18 or 40."
+                }
+              },
+              "required": [
+                "description",
+                "quantity",
+                "rate",
+                "gst_rate"
+              ]
+            }
+          },
+          "invoice_number": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9/-]{1,16}$",
+            "description": "The seller's own invoice number, up to 16 letters, digits, / or -. Ask for it; don't invent one."
+          },
+          "invoice_date": {
+            "description": "YYYY-MM-DD. Defaults to today in India.",
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "due_date": {
+            "description": "YYYY-MM-DD. Defaults to the invoice date (payable on receipt).",
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "place_of_supply": {
+            "description": "The state the supply goes to, if not the buyer's state.",
+            "type": "string",
+            "maxLength": 60
+          },
+          "notes": {
+            "description": "Payment terms or a note printed at the bottom.",
+            "type": "string",
+            "maxLength": 600
+          }
+        },
+        "required": [
+          "seller",
+          "buyer",
+          "items",
+          "invoice_number"
+        ]
+      }
+    },
+    {
+      "name": "sochen_rent_receipts",
+      "server_tool": "make_rent_receipts",
+      "title": "Make rent receipts",
+      "description": "Free, with no Sochen account. Makes month-by-month house rent receipts as one PDF, three to an A4 page, for an HRA (house rent allowance) claim in India: the tenant, landlord, address, monthly rent, the months, and how it was paid. Each receipt has the amount in figures and words, a receipt number and date, a signature line, a blank line for the landlord's PAN (to write in by hand; it is needed once the year's rent passes ₹1,00,000), and a revenue stamp box for cash payments over ₹5,000. Returns a link to the PDF that works for 24 hours. Nothing is saved to an account or sent to anyone.\nUse this when the user needs rent receipts for HRA, a tax declaration, or their employer.\nDo not use for rental agreements or leases, receipts for anything other than house rent, or invoices from a GST-registered landlord (use sochen_gst_invoice).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tenant": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "description": "The tenant's name, as on the HRA claim."
+          },
+          "landlord": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "description": "The landlord's name."
+          },
+          "property_address": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 400,
+            "description": "The rented home's address."
+          },
+          "monthly_rent": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10000000,
+            "description": "Rent for one month, in rupees."
+          },
+          "from_month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "description": "The first month, YYYY-MM (an HRA year usually starts 2026-04)."
+          },
+          "to_month": {
+            "description": "The last month, YYYY-MM. Defaults to the first month; at most 24 months.",
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+          },
+          "payment_mode": {
+            "default": "bank_transfer",
+            "description": "How the rent was paid.",
+            "type": "string",
+            "enum": [
+              "cash",
+              "upi",
+              "bank_transfer",
+              "cheque"
+            ]
+          },
+          "paid_on_day": {
+            "default": 1,
+            "description": "The day of each month the rent was paid (a shorter month uses its last day).",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          }
+        },
+        "required": [
+          "tenant",
+          "landlord",
+          "property_address",
+          "monthly_rent",
+          "from_month"
+        ]
+      }
+    },
+    {
+      "name": "sochen_upi_split",
+      "server_tool": "make_upi_split",
+      "title": "Split a bill with UPI QRs",
+      "description": "Free, with no Sochen account. Splits a shared bill that one person paid, and makes one PDF with a UPI QR card for each person who owes: scanning it in any UPI app pays the payer exactly that person's share, with a note. Splits evenly, or by items when not everyone shared everything, spreading tax, service charge and tip in proportion. A share over ₹1,999 comes as a few equal QRs of ₹1,999 or less, so no payment pays a UPI fee even into a business account. Needs the payer's UPI ID. Sochen doesn't move money; each person pays in their own app. Returns everyone's share and a link to the PDF that works for 24 hours.\nUse this when the user wants to split a restaurant bill, trip, rent or any shared expense in India and collect it back over UPI.\nDo not use for requesting money from strangers, business invoices (use sochen_gst_invoice), payments in other currencies, or amounts over ₹1,00,000 per person.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "What the bill was for, e.g. Dinner at Toit. Shows on each QR's note.",
+            "type": "string",
+            "maxLength": 60
+          },
+          "people": {
+            "minItems": 2,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "description": "Everyone sharing the bill, including the person who paid."
+          },
+          "paid_by": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "description": "The person who paid the whole bill (one of people)."
+          },
+          "paid_by_upi_id": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "The payer's UPI ID (name@bank), which everyone pays back to."
+          },
+          "total": {
+            "description": "The bill's final total in rupees, with tax and tip. Needed when there are no items.",
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10000000
+          },
+          "items": {
+            "description": "Items, when not everyone shared everything. With a total too, the difference (tax, service, tip) is spread by what each person had.",
+            "maxItems": 60,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "amount": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10000000
+                },
+                "shared_by": {
+                  "description": "Who shared this item; everyone when left out.",
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "amount"
+              ]
+            }
+          },
+          "round_to_rupee": {
+            "default": true,
+            "description": "Round each share to whole rupees.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "people",
+          "paid_by",
+          "paid_by_upi_id"
+        ]
+      }
+    }
+  ]
+}

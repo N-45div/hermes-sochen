@@ -1,0 +1,8 @@
+{
+  "name": "sochen",
+  "label": "Sochen",
+  "description": "Backend for the Sochen page in Hermes Desktop: reads your Sochen desk with your key.",
+  "version": "0.1.0",
+  "tab": { "path": "/sochen", "hidden": true },
+  "api": "plugin_api.py"
+}
