@@ -60,13 +60,14 @@ export function deskNews(before, after) {
   return news
 }
 
-/** What's left to spend, in a line ("63 of your 100 free credits left"), or null. */
+/** What's left to spend, in a line ("63 of your 100 free API credits left"), or null. */
 export function creditsLine(view) {
   const credits = view && view.state === 'ready' && view.desk ? view.desk.credits : null
   if (!credits || credits.credits_left == null) return null
   const left = credits.credits_left
-  if (credits.free_start) return `${left} of your ${credits.free_start.total} free credits left`
-  return `${left.toLocaleString('en-US')} credits left`
+  if (credits.free_start) return `${left} of your ${credits.free_start.total} free API credits left`
+  const plan = typeof credits.plan_name === 'string' && credits.plan_name ? ` (${credits.plan_name})` : ''
+  return `${left.toLocaleString('en-US')} API credits left${plan}`
 }
 
 /** The pet's line for one piece of news (the host caps it at 120 characters). */
@@ -147,7 +148,7 @@ function DeskPage({ store, refresh, open }) {
   } else if (view.state === 'setup') {
     body = jsx(Notice, {
       title: 'Connect Sochen',
-      body: 'Make a key at sochen.dev/hermes (a new account gets 100 free credits), then add it in Settings → Plugins → Sochen → API key, or run: hermes config set SOCHEN_API_KEY <your key>. Invoices, rent receipts and bill splits work without it.',
+      body: 'Make a key at sochen.dev/hermes (every account gets 100 free API credits), then add it in Settings → Plugins → Sochen → API key, or run: hermes config set SOCHEN_API_KEY <your key>. Invoices, rent receipts and bill splits work without it.',
       actions: [
         jsx(Button, { key: 'k', size: 'sm', onClick: () => open(view.setup_url || SETUP_URL), children: 'Get a key' }),
         jsx(Button, { key: 'r', size: 'sm', variant: 'outline', onClick: () => void refresh(), children: 'I’ve added it' })

@@ -235,19 +235,19 @@ class SlashCommand(unittest.TestCase):
         self.assertIn("landlord@example.com", text)
         self.assertIn("Working now (1)", text)
         self.assertIn("Done today (1)", text)
-        self.assertIn("63 of your 100 free credits left", text)
+        self.assertIn("63 of your 100 free API credits left", text)
 
     def test_credits(self):
         with FakeSochen() as server:
             ctx, _, _ = setup(server)
-            self.assertEqual(ctx.commands["sochen"]("credits"), "63 of your 100 free credits left")
-            server.credits = {"plan": "free_start", "credits_left": 0, "free_start": {"total": 100, "used": 100, "left": 0}, "upgrade_url": "https://sochen.dev/pricing"}
-            self.assertEqual(ctx.commands["sochen"]("credits"), "0 of your 100 free credits left. Get more: https://sochen.dev/pricing")
-            server.credits = {"plan": "plus", "credits_left": 12345, "free_start": None, "upgrade_url": None}
-            self.assertEqual(ctx.commands["sochen"]("credits"), "12,345 credits left")
+            self.assertEqual(ctx.commands["sochen"]("credits"), "63 of your 100 free API credits left")
+            server.credits = {"plan": "free", "credits_left": 0, "free_start": {"total": 100, "used": 100, "left": 0}, "upgrade_url": "https://sochen.dev/pricing"}
+            self.assertEqual(ctx.commands["sochen"]("credits"), "0 of your 100 free API credits left. Get more: https://sochen.dev/pricing")
+            server.credits = {"plan": "builder", "plan_name": "Builder", "credits_left": 12345, "free_start": None, "upgrade_url": None}
+            self.assertEqual(ctx.commands["sochen"]("credits"), "12,345 API credits left (Builder)")
         with FakeSochen() as server:
             ctx, _, _ = setup(server, key=None)
-            self.assertIn("100 free credits", ctx.commands["sochen"]("credits"))
+            self.assertIn("100 free API credits", ctx.commands["sochen"]("credits"))
 
     def test_a_job_goes_through_the_tool_and_its_approval(self):
         with FakeSochen() as server:

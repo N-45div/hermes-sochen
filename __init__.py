@@ -154,7 +154,7 @@ class SochenPlugin:
                 "",
                 "/sochen            your desk: what needs your OK, what's running, what's done",
                 "/sochen jobs       the jobs Hermes handed to Sochen, and how each stands",
-                "/sochen credits    what's left to spend (a new account starts with 100 free)",
+                "/sochen credits    API credits left to spend (every account starts with 100 free)",
                 "/sochen <a job>    hand Sochen a job, e.g. /sochen call Joe's Pizza at +1 415 555 0134 and ask if they're open till 11",
             ]
         )

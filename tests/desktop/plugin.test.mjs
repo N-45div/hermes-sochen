@@ -160,8 +160,9 @@ describe('the desk in words', () => {
   })
 
   it('says what is left to spend', () => {
-    assert.equal(creditsLine(desk({ credits: { credits_left: 63, free_start: { total: 100, used: 37, left: 63 } } })), '63 of your 100 free credits left')
-    assert.equal(creditsLine(desk({ credits: { credits_left: 12345, free_start: null } })), '12,345 credits left')
+    assert.equal(creditsLine(desk({ credits: { credits_left: 63, free_start: { total: 100, used: 37, left: 63 } } })), '63 of your 100 free API credits left')
+    assert.equal(creditsLine(desk({ credits: { credits_left: 12345, free_start: null } })), '12,345 API credits left')
+    assert.equal(creditsLine(desk({ credits: { credits_left: 2900, free_start: null, plan_name: 'Builder' } })), '2,900 API credits left (Builder)')
     assert.equal(creditsLine(desk({ credits: { credits_left: null } })), null)
     assert.equal(creditsLine(desk()), null)
     assert.equal(creditsLine({ state: 'setup' }), null)
