@@ -5,6 +5,7 @@ Three account endpoints (the Agent API, with the user's ``sk_sochen_`` key) and 
 - ``POST /api/v1/run``: hand Sochen a job; returns at once or after a short wait.
 - ``GET /api/v1/jobs/{chat_id}``: how a job stands, without sending it anything.
 - ``GET /api/v1/desk``: what needs the user, what's running and what finished today.
+- ``GET /api/v1/credits``: what's left to spend (a new account starts with 100 free credits).
 - ``POST /api/mcp``: Sochen's free tools (invoices, rent receipts, UPI splits), no account.
 
 Nothing else is called, and nothing about the user's Hermes chats is sent.
@@ -18,7 +19,7 @@ import urllib.parse
 import urllib.request
 from typing import Any, Optional
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 CLIENT = f"hermes-sochen/{VERSION}"
 DEFAULT_BASE_URL = "https://sochen.dev"
 SETUP_URL = "https://sochen.dev/hermes?utm_source=hermes&utm_medium=plugin"
@@ -111,6 +112,11 @@ class Sochen:
     def desk(self, *, timeout: Optional[float] = None) -> dict:
         """What needs the user, what's running and what finished today."""
         _, data = self._request("GET", "/api/v1/desk", timeout=timeout)
+        return data
+
+    def credits(self, *, timeout: Optional[float] = None) -> dict:
+        """What's left to spend on jobs, a new account's free start, and where to get more."""
+        _, data = self._request("GET", "/api/v1/credits", timeout=timeout)
         return data
 
     def free_tool(self, server_tool: str, arguments: dict) -> dict:

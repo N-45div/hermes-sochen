@@ -8,7 +8,7 @@ from typing import Any, Iterable
 from .client import SETUP_URL
 
 SETUP = (
-    "Sochen isn't connected yet. Make a key at " + SETUP_URL + " (a new account's first job is free), then "
+    "Sochen isn't connected yet. Make a key at " + SETUP_URL + " (a new account gets 100 free credits), then "
     "run `hermes config set SOCHEN_API_KEY <your key>`, or add it in Hermes Desktop under Settings → Plugins → Sochen. "
     "GST invoices, rent receipts and UPI bill splits work without a key."
 )
@@ -24,6 +24,18 @@ def _section(title: str, rows: Iterable[str]) -> list[str]:
     return [f"{title} ({len(rows)})", *rows] if rows else []
 
 
+def credits_text(credits: dict) -> str:
+    """What's left to spend, in a line: "63 of your 100 free credits left", "1,234 credits left"."""
+    if not isinstance(credits, dict) or credits.get("credits_left") is None:
+        return ""
+    left = int(credits["credits_left"])
+    start = credits.get("free_start")
+    line = f"{left} of your {start['total']} free credits left" if isinstance(start, dict) else f"{left:,} credits left"
+    if left <= 0 and credits.get("upgrade_url"):
+        line += f". Get more: {credits['upgrade_url']}"
+    return line
+
+
 def desk_text(desk: dict) -> str:
     """The desk as a few short lines, the way /sochen shows it."""
     if desk.get("held"):
@@ -35,6 +47,9 @@ def desk_text(desk: dict) -> str:
     working = [f"• {_clip(w.get('title'), 70)} ({_clip(w.get('line'), 60)})" for w in desk.get("working") or []]
     done = [f"• {_clip(d.get('title'), 70)} ({_clip(d.get('line'), 60)})" for d in desk.get("done") or []]
     lines = [head] if head else []
+    money = credits_text(desk.get("credits") or {})
+    if money:
+        lines.append(money[0].upper() + money[1:])
     body = _section("Needs your OK", needs) + _section("Heads-ups", heads_ups) + _section("Working now", working) + _section("Done today", done)
     if not body:
         body = ["Nothing on your Sochen desk today. Hand it a job: /sochen <what you need>"]

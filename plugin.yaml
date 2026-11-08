@@ -1,5 +1,5 @@
 name: sochen
-version: 0.1.0
+version: 0.2.0
 description: >-
   Hand Sochen (sochen.dev) the jobs Hermes can't do on its own: phone a US business and bring back
   the answer, research that keeps running in the cloud, and email and calendar jobs that wait for
@@ -30,7 +30,7 @@ config_schema:
     env: SOCHEN_API_KEY
     label: Sochen API key
     description: >-
-      Make one at sochen.dev/hermes (a new account's first job is free). Invoices, rent receipts and
+      Make one at sochen.dev/hermes (a new account gets 100 free credits). Invoices, rent receipts and
       bill splits work without it.
     required: false
   ask_before_handoff:

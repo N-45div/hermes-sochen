@@ -89,6 +89,7 @@ class FakeSochen:
         self.requests: list[dict] = []
         self.job_replies: list[dict] = []
         self.run_reply: tuple[int, dict] | None = None
+        self.credits = {"plan": "free_start", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None}
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), self._handler())
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
 
@@ -134,6 +135,8 @@ class FakeSochen:
                     return self._send(401, {"error": "Send your Sochen API key."})
                 if entry["path"] == "/api/v1/desk":
                     return self._send(200, DESK)
+                if entry["path"] == "/api/v1/credits":
+                    return self._send(200, fake.credits)
                 if entry["path"].startswith("/api/v1/jobs/"):
                     chat_id = entry["path"].rsplit("/", 1)[1]
                     if chat_id != "ses_1":
@@ -177,4 +180,5 @@ DESK = {
     "heads_ups": [],
     "working": [{"id": "ses_1", "title": "Call Joe's Pizza", "line": "Eli · on a call", "chat_url": "https://sochen.dev/s/ses_1"}],
     "done": [{"chat_id": "ses_3", "title": "Flights to Goa", "line": "Eli · 7:42 PM", "stopped": False, "chat_url": "https://sochen.dev/s/ses_3"}],
+    "credits": {"plan": "free_start", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None},
 }

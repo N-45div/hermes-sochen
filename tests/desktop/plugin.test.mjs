@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
 import { host } from '@hermes/plugin-sdk'
-import plugin, { chipLabel, deskCounts, deskNews, petLine } from '../../desktop/plugin.js'
+import plugin, { chipLabel, creditsLine, deskCounts, deskNews, petLine } from '../../desktop/plugin.js'
 
 const desk = (overrides = {}) => ({
   state: 'ready',
@@ -157,6 +157,14 @@ describe('the desk in words', () => {
     assert.equal(chipLabel(desk({ working: [] })), null)
     assert.equal(chipLabel(desk({ heads_ups: [{ id: 'h' }, { id: 'i' }] })), 'Sochen · 2 need you')
     assert.equal(chipLabel({ state: 'setup' }), null)
+  })
+
+  it('says what is left to spend', () => {
+    assert.equal(creditsLine(desk({ credits: { credits_left: 63, free_start: { total: 100, used: 37, left: 63 } } })), '63 of your 100 free credits left')
+    assert.equal(creditsLine(desk({ credits: { credits_left: 12345, free_start: null } })), '12,345 credits left')
+    assert.equal(creditsLine(desk({ credits: { credits_left: null } })), null)
+    assert.equal(creditsLine(desk()), null)
+    assert.equal(creditsLine({ state: 'setup' }), null)
   })
 
   it('finds only what is new', () => {

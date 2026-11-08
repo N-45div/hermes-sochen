@@ -25,7 +25,7 @@ from . import schemas
 from .client import DEFAULT_BASE_URL, Sochen, SochenError, normalize_base_url
 from .jobs import JobStore
 from .tools import Handlers
-from .words import SETUP, desk_text, job_line, job_status_text
+from .words import SETUP, credits_text, desk_text, job_line, job_status_text
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +136,14 @@ class SochenPlugin:
                 return SETUP if error.status == 401 else error.message
         if word == "jobs":
             return self._jobs(client)
+        if word == "credits":
+            if not client.api_key:
+                return SETUP
+            try:
+                line = credits_text(client.credits(timeout=15))
+            except SochenError as error:
+                return SETUP if error.status == 401 else error.message
+            return (line[0].upper() + line[1:]) if line else "Your Sochen account counts jobs, not credits."
         return self._hand_off(text)
 
     def _help(self) -> str:
@@ -146,6 +154,7 @@ class SochenPlugin:
                 "",
                 "/sochen            your desk: what needs your OK, what's running, what's done",
                 "/sochen jobs       the jobs Hermes handed to Sochen, and how each stands",
+                "/sochen credits    what's left to spend (a new account starts with 100 free)",
                 "/sochen <a job>    hand Sochen a job, e.g. /sochen call Joe's Pizza at +1 415 555 0134 and ask if they're open till 11",
             ]
         )
@@ -209,8 +218,8 @@ def register(ctx: Any) -> None:
 
     ctx.register_hook("pre_tool_call", plugin.before_tool)
     ctx.register_hook("pre_llm_call", plugin.before_turn)
-    ctx.register_command("sochen", plugin.command, description="Your Sochen desk, jobs, or hand Sochen a job",
-                         args_hint="[jobs | help | <a job>]")
+    ctx.register_command("sochen", plugin.command, description="Your Sochen desk, jobs, credits, or hand Sochen a job",
+                         args_hint="[jobs | credits | help | <a job>]")
 
     skill = Path(__file__).parent / "skills" / "sochen" / "SKILL.md"
     if skill.is_file():

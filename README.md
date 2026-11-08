@@ -41,6 +41,7 @@ The plugin also adds:
 - **`/sochen`** works in the terminal, Telegram, Discord, Slack and Hermes Desktop:
   - `/sochen` on its own shows your desk.
   - `/sochen jobs` shows the jobs Hermes handed off and how each one stands.
+  - `/sochen credits` shows what's left to spend.
   - `/sochen <a job>` hands a job straight to Sochen, through the same approval prompt.
 - **A Sochen page in Hermes Desktop**, in the sidebar:
   - your desk, with a link to each job
@@ -54,7 +55,8 @@ The plugin also adds:
 
 The free tools need nothing. For everything else:
 
-1. Make a key at **[sochen.dev/hermes](https://sochen.dev/hermes)**. A new account's first job is free.
+1. Make a key at **[sochen.dev/hermes](https://sochen.dev/hermes)**. A new account gets **100 free credits**,
+   spread over as many jobs as you like.
 2. Give the key to Hermes:
 
    ```bash
@@ -70,8 +72,20 @@ The free tools need nothing. For everything else:
 
    Or type `/sochen` to see your desk.
 
-Phone calls go to US businesses, and they aren't part of the free first job. Sochen says on each call
+Phone calls go to US businesses, and they aren't part of the free credits. Sochen says on each call
 that it's an AI calling for you.
+
+## Credits
+
+Jobs run as ordinary Sochen chats and use your Sochen credits:
+
+- A new account gets **100 free credits**, spread over as many jobs as you like (one free start per
+  inbox).
+- After that, jobs use your plan's credits, and Billing on sochen.dev lists every turn.
+- Checking a job, your desk or your credits costs nothing. The invoice, rent receipt and bill split
+  tools are free, with no account.
+- Replies carry `credits_left`, `/sochen` and the Desktop page show what's left, and when it runs out
+  Sochen's reply links to where to get more.
 
 ## You stay in charge
 

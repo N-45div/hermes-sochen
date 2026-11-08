@@ -1,7 +1,7 @@
 ---
 name: sochen
 description: When and how to hand jobs to Sochen (phone calls to businesses, long cloud jobs, email and calendar with the user's OK), check them, and make free GST invoices, rent receipts and UPI bill splits.
-version: 0.1.0
+version: 0.2.0
 author: Sochen
 license: MIT
 metadata:
@@ -55,8 +55,12 @@ Weak: "check the pizza place".
   app or at the chat link. You can't approve it, and you shouldn't try to work around it.
 - `needs_setup`: the user hasn't connected Sochen. Pass on the setup message as it is: a key from
   sochen.dev/hermes, then `hermes config set SOCHEN_API_KEY <key>`.
-- A refusal with `upgrade_url` (for example, calls need a plan, or the free job is used): tell the
-  user what Sochen said and give them the link.
+- A refusal with `upgrade_url` (for example, calls need a plan, or the 100 free credits are used):
+  tell the user what Sochen said and give them the link.
+
+Jobs use the user's Sochen credits. A new account starts with 100 free credits, spread over any
+number of jobs; replies carry `credits_left`, and `/sochen credits` shows what's left. Checking a job
+or the desk costs nothing.
 
 To follow up on a job ("now ask them about Saturday"), pass its `chat_id` to `sochen_handoff`.
 
