@@ -55,7 +55,7 @@ The plugin also adds:
 
 The free tools need nothing. For everything else:
 
-1. Make a key at **[sochen.dev/hermes](https://sochen.dev/hermes)**. A new account gets **100 free credits**,
+1. Make a key at **[sochen.dev/agents](https://sochen.dev/agents)**. Every account gets **100 free API credits**,
    spread over as many jobs as you like.
 2. Give the key to Hermes:
 
@@ -72,16 +72,21 @@ The free tools need nothing. For everything else:
 
    Or type `/sochen` to see your desk.
 
-Phone calls go to US businesses, and they aren't part of the free credits. Sochen says on each call
-that it's an AI calling for you.
+Phone calls go to US businesses, with nothing to set up: no number to add or verify. They need paid
+API credits (a pack or a monthly plan), not the free ones. Sochen says on each call that it's an AI
+calling for you. Asking for a business in another country (India included) puts you on that
+country's waitlist, and you're emailed when calls there open.
 
 ## Credits
 
-Jobs run as ordinary Sochen chats and use your Sochen credits:
+Jobs run as ordinary Sochen chats and use your Sochen **API credits**, which are apart from the
+Sochen app's plans (neither pays for the other):
 
-- A new account gets **100 free credits**, spread over as many jobs as you like (one free start per
-  inbox).
-- After that, jobs use your plan's credits, and Billing on sochen.dev lists every turn.
+- Every account gets **100 free API credits**, spread over as many jobs as you like (one free start
+  per inbox).
+- After that, packs of API credits that never expire, or a monthly Builder or Scale plan with more
+  jobs at once: [API pricing](https://sochen.dev/developers/pricing). Billing on sochen.dev lists
+  every turn.
 - Checking a job, your desk or your credits costs nothing. The invoice, rent receipt and bill split
   tools are free, with no account.
 - Replies carry `credits_left`, `/sochen` and the Desktop page show what's left, and when it runs out
@@ -126,7 +131,7 @@ Under `plugins.entries.sochen.settings` in `config.yaml`, or in Hermes Desktop u
   are stored there.
 - **Telemetry:** none. Requests name the plugin (`hermes-sochen/<version>`) so Sochen can count runs by
   the tool that sent them. Nothing about what a job says is counted.
-- **Your Sochen account:** jobs run as ordinary Sochen chats on your plan and credits, and appear in your
+- **Your Sochen account:** jobs run as ordinary Sochen chats on your API credits, and appear in your
   chat list at sochen.dev. Files from the free tools are kept for 24 hours behind their link. Sochen's
   [privacy policy](https://sochen.dev/privacy) applies.
 

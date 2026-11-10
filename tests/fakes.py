@@ -89,7 +89,7 @@ class FakeSochen:
         self.requests: list[dict] = []
         self.job_replies: list[dict] = []
         self.run_reply: tuple[int, dict] | None = None
-        self.credits = {"plan": "free_start", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None}
+        self.credits = {"plan": "free", "plan_name": "Free credits", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None}
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), self._handler())
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
 
@@ -180,5 +180,5 @@ DESK = {
     "heads_ups": [],
     "working": [{"id": "ses_1", "title": "Call Joe's Pizza", "line": "Eli · on a call", "chat_url": "https://sochen.dev/s/ses_1"}],
     "done": [{"chat_id": "ses_3", "title": "Flights to Goa", "line": "Eli · 7:42 PM", "stopped": False, "chat_url": "https://sochen.dev/s/ses_3"}],
-    "credits": {"plan": "free_start", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None},
+    "credits": {"plan": "free", "plan_name": "Free credits", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None},
 }

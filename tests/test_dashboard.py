@@ -58,7 +58,7 @@ class DeskRoute(unittest.TestCase):
         finally:
             restore()
         self.assertEqual(reply["state"], "setup")
-        self.assertIn("sochen.dev/hermes", reply["setup_url"])
+        self.assertIn("sochen.dev/agents", reply["setup_url"])
 
     def test_with_a_key_it_returns_the_desk_and_keeps_the_key(self):
         with FakeSochen() as server:

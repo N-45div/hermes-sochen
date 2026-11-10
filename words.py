@@ -8,7 +8,7 @@ from typing import Any, Iterable
 from .client import SETUP_URL
 
 SETUP = (
-    "Sochen isn't connected yet. Make a key at " + SETUP_URL + " (a new account gets 100 free credits), then "
+    "Sochen isn't connected yet. Make a key at " + SETUP_URL + " (every account gets 100 free API credits), then "
     "run `hermes config set SOCHEN_API_KEY <your key>`, or add it in Hermes Desktop under Settings → Plugins → Sochen. "
     "GST invoices, rent receipts and UPI bill splits work without a key."
 )
@@ -25,12 +25,14 @@ def _section(title: str, rows: Iterable[str]) -> list[str]:
 
 
 def credits_text(credits: dict) -> str:
-    """What's left to spend, in a line: "63 of your 100 free credits left", "1,234 credits left"."""
+    """What's left to spend, in a line: "63 of your 100 free API credits left", "1,234 API credits left (Builder)"."""
     if not isinstance(credits, dict) or credits.get("credits_left") is None:
         return ""
     left = int(credits["credits_left"])
     start = credits.get("free_start")
-    line = f"{left} of your {start['total']} free credits left" if isinstance(start, dict) else f"{left:,} credits left"
+    plan = credits.get("plan_name")
+    named = f" ({plan})" if isinstance(plan, str) and plan and not isinstance(start, dict) else ""
+    line = f"{left} of your {start['total']} free API credits left" if isinstance(start, dict) else f"{left:,} API credits left{named}"
     if left <= 0 and credits.get("upgrade_url"):
         line += f". Get more: {credits['upgrade_url']}"
     return line

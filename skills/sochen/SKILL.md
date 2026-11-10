@@ -1,7 +1,7 @@
 ---
 name: sochen
 description: When and how to hand jobs to Sochen (phone calls to businesses, long cloud jobs, email and calendar with the user's OK), check them, and make free GST invoices, rent receipts and UPI bill splits.
-version: 0.2.0
+version: 0.2.2
 author: Sochen
 license: MIT
 metadata:
@@ -21,8 +21,10 @@ user's OK in the Sochen app, with the details shown first.
 
 Use `sochen_handoff` when the job needs one of those things:
 
-- **A phone call**: opening hours, a price, whether something is in stock, a free table, a repair's
-  status. Sochen says it's an AI calling for the user, and brings back the answer and a transcript.
+- **A phone call to a US business**: opening hours, a price, whether something is in stock, a free
+  table, a repair's status; or two or three businesses at once to compare quotes. Sochen says it's an
+  AI calling for the user, and brings back the answer and a transcript. Nothing to set up. For a
+  business outside the US, Sochen puts the user on that country's waitlist: pass that on.
 - **A long job**: research, comparisons or browsing that takes many minutes, or should keep going
   after the user closes the laptop.
 - **The user's Sochen apps**: reading or drafting email, finding a calendar slot. Sending waits for
@@ -54,12 +56,12 @@ Weak: "check the pizza place".
 - `needs_approval`: tell the user what Sochen is waiting for and that they approve it in the Sochen
   app or at the chat link. You can't approve it, and you shouldn't try to work around it.
 - `needs_setup`: the user hasn't connected Sochen. Pass on the setup message as it is: a key from
-  sochen.dev/hermes, then `hermes config set SOCHEN_API_KEY <key>`.
-- A refusal with `upgrade_url` (for example, calls need a plan, or the 100 free credits are used):
+  sochen.dev/agents, then `hermes config set SOCHEN_API_KEY <key>`.
+- A refusal with `upgrade_url` (for example, calls need paid API credits, or the 100 free credits are used):
   tell the user what Sochen said and give them the link.
 
-Jobs use the user's Sochen credits. A new account starts with 100 free credits, spread over any
-number of jobs; replies carry `credits_left`, and `/sochen credits` shows what's left. Checking a job
+Jobs use the user's Sochen API credits, apart from their Sochen app plan. Every account starts with
+100 free API credits, spread over any number of jobs, then packs or a monthly API plan; replies carry `credits_left`, and `/sochen credits` shows what's left. Checking a job
 or the desk costs nothing.
 
 To follow up on a job ("now ask them about Saturday"), pass its `chat_id` to `sochen_handoff`.

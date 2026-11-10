@@ -5,7 +5,7 @@ Three account endpoints (the Agent API, with the user's ``sk_sochen_`` key) and 
 - ``POST /api/v1/run``: hand Sochen a job; returns at once or after a short wait.
 - ``GET /api/v1/jobs/{chat_id}``: how a job stands, without sending it anything.
 - ``GET /api/v1/desk``: what needs the user, what's running and what finished today.
-- ``GET /api/v1/credits``: what's left to spend (a new account starts with 100 free credits).
+- ``GET /api/v1/credits``: the API credits left to spend (every account starts with 100 free).
 - ``POST /api/mcp``: Sochen's free tools (invoices, rent receipts, UPI splits), no account.
 
 Nothing else is called, and nothing about the user's Hermes chats is sent.
@@ -19,10 +19,10 @@ import urllib.parse
 import urllib.request
 from typing import Any, Optional
 
-VERSION = "0.2.0"
+VERSION = "0.2.2"
 CLIENT = f"hermes-sochen/{VERSION}"
 DEFAULT_BASE_URL = "https://sochen.dev"
-SETUP_URL = "https://sochen.dev/hermes?utm_source=hermes&utm_medium=plugin"
+SETUP_URL = "https://sochen.dev/agents?utm_source=hermes&utm_medium=plugin"
 
 # A job request waits at most this long for a quick answer before coming back "working".
 MAX_WAIT_SECONDS = 120
