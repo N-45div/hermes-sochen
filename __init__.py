@@ -5,10 +5,11 @@ keeps running in the cloud, email and calendar jobs that wait for the user's OK)
 they finish. Sochen's free tools (GST invoices, rent receipts, UPI bill splits) need no account.
 
 What it registers:
-- tools: sochen_handoff, sochen_job, sochen_desk, sochen_gst_invoice, sochen_rent_receipts,
-  sochen_upi_split
+- tools: sochen_handoff, sochen_job, sochen_answer, sochen_desk, sochen_gst_invoice,
+  sochen_rent_receipts, sochen_upi_split
 - pre_tool_call: Hermes's own approval prompt before a job that uses Sochen credits
-- pre_llm_call: a short note to the model when a job it handed off finishes or needs the user
+- pre_llm_call: a short note to the model when a job it handed off finishes, needs the user, or its
+  phone call's business is holding for the user's answer
 - /sochen: the desk, the jobs, or a job handed straight to Sochen
 - a bundled skill (sochen:sochen) and a "Sochen morning desk" automation blueprint
 """
@@ -168,7 +169,7 @@ class SochenPlugin:
         rows = []
         for job in jobs:
             reply: dict = {}
-            if job.get("status") in ("working", "needs_approval"):
+            if job.get("status") in ("working", "needs_approval", "on_call"):
                 try:
                     reply = client.job(job["chat_id"], job.get("cursor"), timeout=8)
                     self.store.update(job["chat_id"], reply)
@@ -209,6 +210,8 @@ def register(ctx: Any) -> None:
                       description="Hand Sochen a job", emoji="📞")
     ctx.register_tool(name="sochen_job", toolset=TOOLSET, schema=schemas.JOB, handler=handlers.job,
                       description="Check a Sochen job", emoji="📋")
+    ctx.register_tool(name="sochen_answer", toolset=TOOLSET, schema=schemas.ANSWER, handler=handlers.answer,
+                      description="Answer a Sochen call's question", emoji="💬")
     ctx.register_tool(name="sochen_desk", toolset=TOOLSET, schema=schemas.DESK, handler=handlers.desk,
                       description="Your Sochen desk", emoji="🗂️")
     for tool in schemas.free_tools():

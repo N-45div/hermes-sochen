@@ -89,6 +89,7 @@ class FakeSochen:
         self.requests: list[dict] = []
         self.job_replies: list[dict] = []
         self.run_reply: tuple[int, dict] | None = None
+        self.answer_reply: tuple[int, dict] | None = None
         self.credits = {"plan": "free", "plan_name": "Free credits", "credits_left": 63, "free_start": {"total": 100, "used": 37, "left": 63}, "upgrade_url": None}
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), self._handler())
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
@@ -157,6 +158,12 @@ class FakeSochen:
                             "structuredContent": {"pdf": {"url": "https://sochen.dev/api/mcp/files/abc/Invoice.pdf"}},
                         }})
                     return self._send(200, {"jsonrpc": "2.0", "id": 1, "result": {"content": [{"type": "text", "text": "Missing the people to split between."}], "isError": True}})
+                if entry["path"] == "/api/v1/jobs/ses_1/answer":
+                    if not self._authorized():
+                        return self._send(401, {"error": "Send your Sochen API key."})
+                    if fake.answer_reply:
+                        return self._send(*fake.answer_reply)
+                    return self._send(200, {"status": "sent", "question": "What name for the booking?", "chat_id": "ses_1"})
                 if entry["path"] == "/api/v1/run":
                     if not self._authorized():
                         return self._send(401, {"error": "Send your Sochen API key."})

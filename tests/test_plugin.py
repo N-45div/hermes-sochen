@@ -225,6 +225,71 @@ class FinishedJobs(unittest.TestCase):
         self.assertIn("Couldn't reach Sochen", reply["error"])
 
 
+CALLING = {"business": "Olive Bistro", "status": "live", "note": "A phone call this job placed is going on."}
+QUESTION = {"id": "cq_1", "business": "Olive Bistro", "text": "What name should I put the booking under?", "seconds_left": 70,
+            "asked_at": "2026-11-10T12:00:00Z", "expires_at": "2026-11-10T12:01:15Z"}
+
+
+class MidCallQuestions(unittest.TestCase):
+    """A call Sochen makes for the user: Hermes stays with it, and asks the user what the business asks."""
+
+    def test_hermes_follows_a_call_and_passes_the_users_answer_to_the_business(self):
+        with FakeSochen() as server:
+            ctx, instance, _ = setup(server)
+            server.run_reply = (200, {"status": "answered", "answer": "Calling Olive Bistro now.", "chat_id": "ses_1",
+                                      "chat_url": "https://sochen.dev/s/ses_1", "cursor": 0, "call": {**CALLING, "status": "dialing"}})
+            started = call(ctx, "sochen_handoff", {"task": "Call Olive Bistro and book a table for two at 7:30"})
+            self.assertIn("call this job placed is going on", started["note"], "a call isn't a finished job")
+            self.assertEqual(instance.store.get("ses_1")["status"], "on_call")
+
+            server.job_replies = [{"status": "answered", "answer": "Calling Olive Bistro now.", "call": CALLING, "question": QUESTION}]
+            checked = call(ctx, "sochen_job", {"chat_id": "ses_1", "wait_seconds": 60})
+            self.assertEqual(checked["question"]["text"], "What name should I put the booking under?")
+            self.assertIn("Ask the user now", checked["note"])
+            self.assertIn("about 70 seconds", checked["note"])
+            self.assertIn("sochen_answer", checked["note"])
+            self.assertEqual(server.requests[-1]["query"], {"cursor": ["0"], "wait": ["60"]})
+
+            sent = call(ctx, "sochen_answer", {"chat_id": "ses_1", "answer": "  Divij,   party of two ", "question_id": "cq_1"})
+            self.assertTrue(sent["ok"])
+            self.assertIn("telling the business", sent["note"])
+            answer = [r for r in server.requests if r["path"] == "/api/v1/jobs/ses_1/answer"][0]
+            self.assertEqual(answer["body"], {"answer": "Divij, party of two", "question_id": "cq_1"})
+
+    def test_hermes_hears_a_waiting_question_on_its_next_turn_once(self):
+        with FakeSochen() as server:
+            ctx, instance, clock = setup(server)
+            server.run_reply = (200, {"status": "answered", "answer": "Calling now.", "chat_id": "ses_1", "cursor": 0, "call": CALLING})
+            call(ctx, "sochen_handoff", {"task": "Call Olive Bistro"})
+            server.job_replies = [
+                {"status": "answered", "answer": "Calling now.", "call": CALLING},
+                {"status": "answered", "answer": "Calling now.", "call": CALLING, "question": QUESTION},
+                {"status": "answered", "answer": "Calling now.", "call": CALLING, "question": QUESTION},
+                {"status": "answered", "answer": "Booked for 7:30 under Divij."},
+            ]
+            clock.now += 1  # a call is looked at on every turn, not every 20 seconds
+            self.assertIsNone(instance.before_turn(), "still on the phone: nothing to say yet")
+            clock.now += 1
+            asked = instance.before_turn()["context"]
+            self.assertIn("Olive Bistro asked something only the user can answer", asked)
+            self.assertIn('"What name should I put the booking under?"', asked)
+            self.assertIn("sochen_answer (chat_id ses_1)", asked)
+            clock.now += 1
+            self.assertIsNone(instance.before_turn(), "the same question isn't news twice")
+            clock.now += 1
+            self.assertIn("Booked for 7:30 under Divij", instance.before_turn()["context"])
+
+    def test_a_late_answer_says_the_business_moved_on(self):
+        with FakeSochen() as server:
+            ctx, _, _ = setup(server)
+            server.answer_reply = (410, {"error": "Too late: the business couldn't hold any longer.", "reason": "too_late"})
+            late = call(ctx, "sochen_answer", {"chat_id": "ses_1", "answer": "Divij"})
+            self.assertFalse(late["ok"])
+            self.assertTrue(late["too_late"])
+            self.assertIn("follow up", late["note"])
+            self.assertIn("chat_id", call(ctx, "sochen_answer", {"answer": "Divij"})["error"])
+
+
 class SlashCommand(unittest.TestCase):
     def test_the_desk(self):
         with FakeSochen() as server:

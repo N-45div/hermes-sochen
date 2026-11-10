@@ -1,5 +1,5 @@
 name: sochen
-version: 0.2.2
+version: 0.3.0
 description: >-
   Hand Sochen (sochen.dev) the jobs Hermes can't do on its own: phone a US business and bring back
   the answer, research that keeps running in the cloud, and email and calendar jobs that wait for
@@ -16,6 +16,7 @@ tags: [tools, phone-calls, india, invoices, agents]
 provides_tools:
   - sochen_handoff
   - sochen_job
+  - sochen_answer
   - sochen_desk
   - sochen_gst_invoice
   - sochen_rent_receipts

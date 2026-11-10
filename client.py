@@ -3,7 +3,9 @@
 Three account endpoints (the Agent API, with the user's ``sk_sochen_`` key) and one public one:
 
 - ``POST /api/v1/run``: hand Sochen a job; returns at once or after a short wait.
-- ``GET /api/v1/jobs/{chat_id}``: how a job stands, without sending it anything.
+- ``GET /api/v1/jobs/{chat_id}``: how a job stands, without sending it anything (``wait`` holds it
+  up to a minute for news: a question from a call's business, or the job being done).
+- ``POST /api/v1/jobs/{chat_id}/answer``: the user's answer to a question a call is holding for.
 - ``GET /api/v1/desk``: what needs the user, what's running and what finished today.
 - ``GET /api/v1/credits``: the API credits left to spend (every account starts with 100 free).
 - ``POST /api/mcp``: Sochen's free tools (invoices, rent receipts, UPI splits), no account.
@@ -19,13 +21,15 @@ import urllib.parse
 import urllib.request
 from typing import Any, Optional
 
-VERSION = "0.2.2"
+VERSION = "0.3.0"
 CLIENT = f"hermes-sochen/{VERSION}"
 DEFAULT_BASE_URL = "https://sochen.dev"
 SETUP_URL = "https://sochen.dev/agents?utm_source=hermes&utm_medium=plugin"
 
 # A job request waits at most this long for a quick answer before coming back "working".
 MAX_WAIT_SECONDS = 120
+# A status check waits at most this long for news.
+MAX_CHECK_WAIT_SECONDS = 60
 
 
 class SochenError(Exception):
@@ -103,10 +107,26 @@ class Sochen:
         _, data = self._request("POST", "/api/v1/run", body, timeout=wait + 45)
         return data
 
-    def job(self, chat_id: str, cursor: Optional[int] = None, *, timeout: Optional[float] = None) -> dict:
-        """How a job stands: working, needs_approval, answered or failed."""
-        query = f"?cursor={int(cursor)}" if isinstance(cursor, int) and cursor >= 0 else ""
-        _, data = self._request("GET", f"/api/v1/jobs/{urllib.parse.quote(chat_id, safe='')}{query}", timeout=timeout)
+    def job(self, chat_id: str, cursor: Optional[int] = None, *, wait: int = 0, timeout: Optional[float] = None) -> dict:
+        """How a job stands: working, needs_approval, answered or failed, with ``call`` while a phone call it
+        placed goes on and ``question`` when that call's business is holding for the user's answer. ``wait``
+        (seconds, up to 60) holds the check until there's a question or the job and its call are done."""
+        params: dict[str, str] = {}
+        if isinstance(cursor, int) and cursor >= 0:
+            params["cursor"] = str(int(cursor))
+        wait = max(0, min(MAX_CHECK_WAIT_SECONDS, int(wait)))
+        if wait:
+            params["wait"] = str(wait)
+        query = f"?{urllib.parse.urlencode(params)}" if params else ""
+        _, data = self._request("GET", f"/api/v1/jobs/{urllib.parse.quote(chat_id, safe='')}{query}", timeout=timeout or (wait + 20))
+        return data
+
+    def answer(self, chat_id: str, answer: str, question_id: Optional[str] = None, *, timeout: Optional[float] = 20) -> dict:
+        """The user's answer to the question a job's call is holding for; Sochen tells the business at once."""
+        body: dict[str, Any] = {"answer": answer}
+        if question_id:
+            body["question_id"] = question_id
+        _, data = self._request("POST", f"/api/v1/jobs/{urllib.parse.quote(chat_id, safe='')}/answer", body, timeout=timeout)
         return data
 
     def desk(self, *, timeout: Optional[float] = None) -> dict:
