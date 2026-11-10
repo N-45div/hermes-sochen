@@ -1,8 +1,8 @@
-# Sochen for Hermes Agent
+# Sochen plugin
 
-![Sochen for Hermes: give Hermes a phone](assets/banner.png)
+![Sochen: give your agent a phone](assets/banner.png)
 
-**Hand Sochen the jobs Hermes can't do on its own, and hear back when they're done.**
+**Hand Sochen the jobs your agent can't do on its own, and hear back when they're done.**
 
 [Sochen](https://sochen.dev) gives any open-source agent a phone, a computer in the cloud, and the
 email and calendar you connect to it. Your agent hands it a job:
@@ -12,10 +12,11 @@ email and calendar you connect to it. Your agent hands it a job:
 - research or browsing that keeps running after you close the laptop
 - an email or calendar job that waits for your OK
 
-This is the native plugin for Hermes Agent. Goose, OpenCode, Codex CLI, Cline and other MCP agents get
-the same jobs from Sochen's MCP server: see [sochen.dev/agents](https://sochen.dev/agents).
+This repo is the Sochen plugin. Its first native home is **Hermes Agent** (everything below). Goose,
+OpenCode, Codex CLI, Cline and other MCP agents get the same jobs, mid-call questions included, from
+Sochen's MCP server: the setup for each is at [sochen.dev/agents](https://sochen.dev/agents).
 
-**When the business asks something only you can answer, you answer it in Hermes.** Mid-call, "what name
+**When the business asks something only you can answer, you answer it in your agent.** Mid-call, "what name
 should I put the booking under?" comes to your Hermes chat while the business holds the line; your reply
 goes straight back into the call, and Sochen says it. No answer within about a minute, and Sochen tells
 them you'll follow up.
@@ -26,7 +27,7 @@ Three Indian paperwork tools work straight after install, with no account: GST i
 for HRA, and UPI bill splits.
 
 ```bash
-hermes plugins install N-45div/hermes-sochen --enable
+hermes plugins install N-45div/sochen-plugin --enable
 ```
 
 ## What you get
