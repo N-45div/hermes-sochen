@@ -97,7 +97,7 @@ Sochen app's plans (neither pays for the other):
 - Every account gets **100 free API credits**, spread over as many jobs as you like (one free start
   per inbox).
 - After that, packs of API credits that never expire, or a monthly Builder or Scale plan with more
-  jobs at once: [API pricing](https://sochen.dev/developers/pricing). Billing on sochen.dev lists
+  jobs at once: [API pricing](https://sochen.dev/pricing#api). Billing on sochen.dev lists
   every turn.
 - Checking a job, your desk or your credits costs nothing. The invoice, rent receipt and bill split
   tools are free, with no account.
