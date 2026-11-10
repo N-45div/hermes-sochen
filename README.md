@@ -4,12 +4,21 @@
 
 **Hand Sochen the jobs Hermes can't do on its own, and hear back when they're done.**
 
-[Sochen](https://sochen.dev) is a cloud agent with a phone, its own computer, and the email and
-calendar you connect to it. This plugin lets Hermes hand it a job:
+[Sochen](https://sochen.dev) gives any open-source agent a phone, a computer in the cloud, and the
+email and calendar you connect to it. Your agent hands it a job:
 
-- phone a US business and bring back what they said
+- phone a US business and bring back what they said, with nothing to set up (no Twilio account, number
+  or voice keys)
 - research or browsing that keeps running after you close the laptop
 - an email or calendar job that waits for your OK
+
+This is the native plugin for Hermes Agent. Goose, OpenCode, Codex CLI, Cline and other MCP agents get
+the same jobs from Sochen's MCP server: see [sochen.dev/agents](https://sochen.dev/agents).
+
+**When the business asks something only you can answer, you answer it in Hermes.** Mid-call, "what name
+should I put the booking under?" comes to your Hermes chat while the business holds the line; your reply
+goes straight back into the call, and Sochen says it. No answer within about a minute, and Sochen tells
+them you'll follow up.
 
 Hermes keeps talking to you while Sochen works, and tells you when the job is done.
 
@@ -25,7 +34,8 @@ hermes plugins install N-45div/hermes-sochen --enable
 | | What it does | Account |
 |---|---|---|
 | `sochen_handoff` | Hands Sochen a job: a phone call, a long research job, an email or calendar task. Returns the answer, or "working" with a link. | Sochen key |
-| `sochen_job` | Checks a job without sending it anything: working, needs your OK, answered or failed. | Sochen key |
+| `sochen_job` | Checks a job without sending it anything: working, needs your OK, answered or failed. While a call goes on, it waits up to a minute for news, so Hermes stays with the call. | Sochen key |
+| `sochen_answer` | Passes your answer to a question the business asked mid-call; Sochen says it on the line. | Sochen key |
 | `sochen_desk` | Your Sochen desk: what waits for your OK, what's running, what finished today. | Sochen key |
 | `sochen_gst_invoice` | An Indian GST tax invoice as a PDF: CGST and SGST within a state, IGST across states, and a UPI QR for the total. | None, free |
 | `sochen_rent_receipts` | Monthly house rent receipts for an HRA claim, three to an A4 page. | None, free |
@@ -38,6 +48,8 @@ The plugin also adds:
   prompt, so Hermes's approval rules decide.
 - **Finished jobs come back to you.** On your next message, Hermes hears which jobs it handed off have
   finished, stopped or now need your OK, and tells you once. You don't need to keep asking.
+- **Hermes stays on a call with you.** While a call goes on, Hermes follows it, and any question from
+  the business reaches you in the same chat, in the terminal, Telegram or Hermes Desktop alike.
 - **`/sochen`** works in the terminal, Telegram, Discord, Slack and Hermes Desktop:
   - `/sochen` on its own shows your desk.
   - `/sochen jobs` shows the jobs Hermes handed off and how each one stands.
@@ -85,7 +97,7 @@ Sochen app's plans (neither pays for the other):
 - Every account gets **100 free API credits**, spread over as many jobs as you like (one free start
   per inbox).
 - After that, packs of API credits that never expire, or a monthly Builder or Scale plan with more
-  jobs at once: [API pricing](https://sochen.dev/developers/pricing). Billing on sochen.dev lists
+  jobs at once: [API pricing](https://sochen.dev/pricing#api). Billing on sochen.dev lists
   every turn.
 - Checking a job, your desk or your credits costs nothing. The invoice, rent receipt and bill split
   tools are free, with no account.

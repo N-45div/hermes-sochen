@@ -16,7 +16,7 @@ KEEP_SECONDS = 7 * 86_400
 MAX_JOBS = 40
 # A job is looked at again no sooner than this.
 CHECK_EVERY_SECONDS = 20
-OPEN = ("working", "needs_approval")
+OPEN = ("working", "needs_approval", "on_call")
 
 
 def label(task: str, limit: int = 90) -> str:
@@ -63,6 +63,9 @@ class JobStore:
         jobs = self._load()
         now = self._clock()
         status = reply.get("status") if isinstance(reply.get("status"), str) else "working"
+        # A job that placed a call isn't done while the call goes on, whatever its chat said.
+        if isinstance(reply.get("call"), dict):
+            status = "on_call"
         previous = jobs.get(chat_id, {})
         jobs[chat_id] = {
             "label": label(task) if not previous else previous.get("label", label(task)),
@@ -79,19 +82,42 @@ class JobStore:
     def due(self, limit: int = 2) -> list[dict]:
         """Open jobs not looked at for a while, longest-unchecked first."""
         now = self._clock()
-        open_jobs = [job for job in self.all() if job.get("status") in OPEN and now - float(job.get("checked", 0)) >= CHECK_EVERY_SECONDS]
+        # A job on a call is looked at every time: its business may be holding for the user's answer.
+        open_jobs = [
+            job for job in self.all()
+            if job.get("status") in OPEN and (job.get("status") == "on_call" or now - float(job.get("checked", 0)) >= CHECK_EVERY_SECONDS)
+        ]
         open_jobs.sort(key=lambda job: float(job.get("checked", 0)))
         return open_jobs[:limit]
 
+    def answered(self, chat_id: str) -> None:
+        """The user answered the question the job's call was holding for: it isn't news any more."""
+        jobs = self._load()
+        if chat_id in jobs:
+            jobs[chat_id]["question"] = None
+            self._save(jobs)
+
     def update(self, chat_id: str, reply: dict) -> Optional[dict]:
         """Record a job's latest status. Returns the job when Hermes hasn't been told this status yet
-        and it's worth telling (finished, failed, or newly waiting for the user's OK)."""
+        and it's worth telling (finished, failed, newly waiting for the user's OK, or a new question
+        from a call's business). A job whose call goes on stays open ("on_call") whatever its chat says."""
         jobs = self._load()
         job = jobs.get(chat_id)
         if job is None:
             return None
         status = reply.get("status")
         job["checked"] = self._clock()
+        question = reply.get("question") if isinstance(reply.get("question"), dict) else None
+        if question or isinstance(reply.get("call"), dict):
+            job["status"] = "on_call"
+            if question and question.get("id") != job.get("asked"):
+                job["asked"] = question.get("id")
+                jobs[chat_id] = job
+                self._save(jobs)
+                return {"chat_id": chat_id, **job}
+            jobs[chat_id] = job
+            self._save(jobs)
+            return None
         if status in ("working", "needs_approval", "answered", "failed"):
             job["status"] = status
         # Approved and back at work: a later wait for the user's OK is news again.

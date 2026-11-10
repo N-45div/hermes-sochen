@@ -63,6 +63,18 @@ def job_line(job: dict, reply: dict) -> str:
     name = _clip(job.get("label"), 90)
     url = reply.get("chat_url") or job.get("chat_url") or ""
     status = reply.get("status")
+    question = reply.get("question") if isinstance(reply.get("question"), dict) else None
+    if question:
+        business = _clip(question.get("business") or "The business", 80)
+        left = question.get("seconds_left")
+        hold = f"about {left} seconds" if isinstance(left, int) else "about a minute"
+        return (
+            f'- On the call for "{name}", {business} asked something only the user can answer, and is holding for {hold}. '
+            f'Their words: "{_clip(question.get("text"), 500)}". Ask the user now; send their exact reply with '
+            f'sochen_answer (chat_id {job.get("chat_id")}), then keep following the job with sochen_job.'
+        )
+    if isinstance(reply.get("call"), dict):
+        return f'- "{name}": the phone call is still going on ({url})'
     if status == "answered":
         return f'- "{name}" is done. Sochen said: {_clip(reply.get("answer"), 1500)} ({url})'
     if status == "failed":
@@ -76,5 +88,10 @@ def job_line(job: dict, reply: dict) -> str:
 def job_status_text(job: dict, reply: dict) -> str:
     """One job for /sochen jobs."""
     status = reply.get("status") or job.get("status") or "working"
-    word = {"working": "working", "needs_approval": "needs your OK", "answered": "done", "failed": "stopped"}.get(status, status)
+    if isinstance(reply.get("question"), dict):
+        status = "question"
+    elif isinstance(reply.get("call"), dict):
+        status = "on_call"
+    word = {"working": "working", "needs_approval": "needs your OK", "answered": "done", "failed": "stopped", "on_call": "on the phone",
+            "question": "the business is asking you something"}.get(status, status)
     return f"• {_clip(job.get('label'), 70)}: {word}\n  {reply.get('chat_url') or job.get('chat_url') or ''}"
