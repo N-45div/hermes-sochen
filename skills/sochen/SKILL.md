@@ -66,7 +66,7 @@ Weak: "check the pizza place".
   app or at the chat link. You can't approve it, and you shouldn't try to work around it.
 - `needs_setup`: the user hasn't connected Sochen. Pass on the setup message as it is: a key from
   sochen.dev/agents, then `hermes config set SOCHEN_API_KEY <key>`.
-- A refusal with `upgrade_url` (for example, calls need paid API credits, or the 100 free credits are used):
+- A refusal with `upgrade_url` (for example, the one call the free credits cover has been made, or the 100 free credits are used):
   tell the user what Sochen said and give them the link.
 
 Jobs use the user's Sochen API credits, apart from their Sochen app plan. Every account starts with
